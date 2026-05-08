@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+         .loginContainer{ background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 350px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);}
+        .container{
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 350px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+
+        h2{
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input{
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button{
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background: green;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover{
+            background: darkgreen;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div  class = "loginContainer">
+          <h2>Login</h2>
+           <form id="loginForm">
+
+         <input type="email" name="email" placeholder="Email" required>
+         <input type="password" name="password" placeholder="password" required>
+
+         <button type="submit">Login</button>
+    </form>
+    </div>
+   
+   
+<div class="container">
+  
+    <h2>Register</h2>
+
+    
+
+    <form id="registerForm">
+
+        <input type="email" name="email" placeholder="Email" required>
+
+        <input type="password" name="password" placeholder="Password" required>
+
+        <input type="text" name="empname" placeholder="First Name" required>
+
+        <input type="text" name="surname" placeholder="Surname" required>
+
+        <input type="text" name="department" placeholder="Department" required>
+
+        <input type="text" name="contact" placeholder="Contact" required>
+
+        <input type="text" name="mentor" placeholder="Manager" required>
+
+        <input type="text" name="gender" placeholder="Gender" required>
+
+        <button type="submit">Register</button>
+
+    </form>
+
+</div>
+
+<script>
+
+const API_URL = "http://localhost:3000";
+
+document.getElementById("loginForm").addEventListener("submit",  async function(e)  {
+    
+     e.preventDefault();
+
+
+     const formData = new FormData(this);
+
+     const data = {
+        email: formData.get("email"),
+        password:formData.get("password")
+     };
+
+      console.log("LOGIN DATA:", data);
+
+    try{
+        const res = await fetch(`${API_URL}/login`,{
+
+            method:"POST",
+            headers:{"Content-Type" : "Application/json"},
+            body:JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log("LOGIN RESPONSE:", data);
+
+            if (data.token) {
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("role", data.role);
+              
+                alert("Login Successful!")
+               
+                 if(data.role === "intern"){
+
+                    window.location.href ="intern.html";
+
+                 } else if(data.role === "supervisor"){
+                    window.location.href ="supervisor.html";
+
+                 }else{
+                    alert("Unknown Role");
+                 }
+
+                }else{
+                     alert(data.message || "Login Failed");
+
+            }
+        })
+
+    }catch(error){
+          console.error("LOGIN ERROR:", error);
+
+        alert("Server not reachable");
+    }
+    });
+
+document.getElementById("registerForm").addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    const data = {
+        email: formData.get("email"),
+        password: formData.get("password"),
+        empname: formData.get("empname"),
+        surname: formData.get("surname"),
+        department: formData.get("department"),
+        contact: formData.get("contact"),
+        mentor: formData.get("mentor"),
+        gender: formData.get("gender")
+    };
+
+    console.log("REGISTER DATA:", data);
+
+    try{
+
+        const res = await fetch(`${API_URL}/register`, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(data)
+
+        });
+
+        const result = await res.json();
+
+        console.log("REGISTER RESPONSE:", result);
+
+        if(res.ok){
+
+            alert(result.message || "Registration successful");
+
+            document.getElementById("registerForm").reset();
+
+        } else {
+
+            alert(result.message || "Registration failed");
+
+        }
+
+    } catch(error){
+
+        console.error("REGISTER ERROR:", error);
+
+        alert("Server not reachable");
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

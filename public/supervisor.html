@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Supervisor Dashboard</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f4f6f9;
+    text-align: center;
+    padding: 30px;
+}
+
+table {
+    width: 80%;
+    margin: auto;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+th {
+    background: green;
+    color: white;
+}
+
+button {
+    margin: 10px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<hr>
+
+<h2>Assign Task</h2>
+
+<button onclick="toggleForm()">Assign Task</button>
+
+<div id="taskFormContainer" style="display:none;">
+<form id="assignTask">
+
+    <input type="text" name="employee_Id" placeholder="Employee ID" required><br><br>
+
+    <input type="text" name="task_description" placeholder="Task Description" required><br><br>
+
+    <input type="date" name="date_task" required><br><br>
+
+    <input type="text" name="department" placeholder="Department" required><br><br>
+
+    <button type="submit">Assign Task</button>
+
+</form>
+</div>
+
+<hr>
+
+<h2>Tasks</h2>
+<button onclick="mytasks()">Load Tasks</button>
+
+<table id="tasksTable" style="display:none;">
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Description</th>
+    <th>Date</th>
+    <th>Challenges</th>
+    <th>Feedback</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<div id="feedbackContainer" style="display:none;">
+    <input type="hidden" id="task_Id">
+
+    <input type="text" id="feedback" placeholder="Write feedback">
+
+    <button onclick="sendReport()">Send Report</button>
+</div>
+
+<script>
+
+const API_URL = "http://localhost:3000";
+
+
+function toggleForm(){
+    const box = document.getElementById("taskFormContainer");
+    box.style.display = box.style.display === "none" ? "block" : "none";
+}
+
+
+document.getElementById("assignTask").addEventListener("submit", async function(e){
+    e.preventDefault();
+
+    const token = localStorage.getItem("token");
+    if(!token) return alert("Login first");
+
+    const data = {
+        employee_Id: this.employee_Id.value,
+        task_description: this.task_description.value,
+        date_task: this.date_task.value,
+        department: this.department.value
+    };
+
+    const res = await fetch(`${API_URL}/tasks`, {
+        method: "POST",
+        headers: {
+            "Content-Type":"application/json",
+            "Authorization":`Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if(result.success){
+        alert("Task assigned");
+        this.reset();
+        toggleForm();
+        mytasks();
+    } else {
+        alert(result.message || "Failed");
+    }
+});
+
+function mytasks(){
+    const token = localStorage.getItem("token");
+    if(!token) return alert("Login first");
+
+    fetch(`${API_URL}/myTasksSupervisor`, {
+        headers:{
+            "Authorization":`Bearer ${token}`
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            render(data.data);
+        }
+    });
+}
+
+
+function render(tasks){
+
+    const tbody = document.querySelector("#tasksTable tbody");
+
+    tbody.innerHTML = "";
+
+    tasks.forEach(t => {
+
+        tbody.innerHTML += `
+        <tr>
+            <td>${t.task_Id}</td>
+
+            <td>${t.task_description}</td>
+
+            <td>${t.date_task}</td>
+
+            <td>${t.challenges || "No challenges"}</td>
+
+            <td>
+                <br><br>
+                <button onclick="openReport(${t.task_Id})">
+                    Feedback
+                </button>
+            </td>
+
+        </tr>
+        `;
+    });
+
+    document.getElementById("tasksTable").style.display = "table";
+}
+
+function openReport(id){
+    document.getElementById("task_Id").value = id;
+    document.getElementById("feedbackContainer").style.display = "block";
+}
+
+function sendReport(){
+    
+    const token = localStorage.getItem("token");
+    const task_Id = document.getElementById("task_Id").value;
+    const feedback = document.getElementById("feedback").value;
+
+    if(!feedback) return alert("Write report first");
+
+    fetch(`${API_URL}/tasksFed`, {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":`Bearer ${token}`
+        },
+        body: JSON.stringify({
+            task_Id: taskId,
+            feedback:feedback
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.message === "Feedback Updated Successfully"){
+            alert("Report sent");
+            document.getElementById("feedback").value = "";
+            mytasks();
+        }
+    });
+}
+
+</script>
+
+</body>
+</html>

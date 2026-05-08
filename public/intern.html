@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Intern Dashboard</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f4f6f9;
+    text-align: center;
+    padding: 30px;
+}
+
+table {
+    width: 80%;
+    margin: auto;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+th {
+    background: green;
+    color: white;
+}
+
+button {
+    margin: 10px;
+    padding: 10px 15px;
+    cursor: pointer;
+    background-color: aquamarine;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Intern Dashboard</h2>
+<button onclick="signout()">Signout</button>
+<button onclick="mytasks()">Load Tasks</button>
+
+<table id="tasksTable" style="display:none;">
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Description</th>
+    <th>Date</th>
+    <th>Report</th>
+    <th>Feedback</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+
+
+<div id="reportContainer" style="display:none;">
+    <input type="hidden" id="taskId">
+
+    <input type="text" id="challengeInput" placeholder="Write report">
+
+    <button onclick="sendReport()">Send Report</button>
+</div>
+
+ 
+
+<script>
+
+const API_URL = "http://localhost:3000";
+
+
+window.onload = function(){
+    mytasks();
+    setInterval(mytasks, 10000);
+};
+
+
+function mytasks(){
+
+    let previousCount = 0;
+
+    const token = localStorage.getItem("token");
+    if(!token) return alert("Login first");
+
+    fetch(`${API_URL}/tasksREsEmpl`, {
+        headers:{
+            "Authorization":`Bearer ${token}`
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+         
+
+            if(data.data.length> previousCount){
+                alert("New Task assigned!");
+            }
+
+            previousCount = data.data.length;
+     
+               render(data.data);
+        }
+    });
+}
+
+function render(tasks){
+    const tbody = document.querySelector("#tasksTable tbody");
+
+    tbody.innerHTML = "";
+
+    document.title =`(${tasks.length}) Intern Dashboard`;
+    if(tasks.length> 0 ){
+
+        document.getElementById("tasksTable").style.display ="table";
+
+    }
+    tasks.forEach(t => {
+
+        tbody.innerHTML += `
+
+        <tr>
+            <td>${t.task_Id}</td>
+            <td>${t.task_description}</td>
+            <td>${t.date_task}</td>
+            <td><button onclick="openReport(${t.task_Id})">Report</button></td>
+            <td>${t.feedback || ""}</td>
+        </tr>`;
+    });
+
+  
+}
+
+
+function openReport(id){
+    document.getElementById("taskId").value = id;
+    document.getElementById("reportContainer").style.display = "block";
+}
+
+
+function sendReport(){
+    const token = localStorage.getItem("token");
+    const taskId = document.getElementById("taskId").value;
+    const challenge = document.getElementById("challengeInput").value;
+
+    if(!challenge) return alert("Write report first");
+
+    fetch(`${API_URL}/taskschal`, {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":`Bearer ${token}`
+        },
+        body: JSON.stringify({
+            task_Id: taskId,
+            challenges: challenge
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.message === "Challenges Updated Successfully"){
+            alert("Report sent");
+            document.getElementById("challengeInput").value = "";
+            mytasks();
+        }
+    });
+}
+
+</script>
+
+</body>
+</html>
