@@ -91,7 +91,7 @@ const authenticationToken = (req, res, next) =>{
             });
         }
 
-        req.user =user;
+        req.user = user;
         next();
     });
 };
@@ -120,21 +120,19 @@ app.post("/login", async(req ,res) =>
 
         const role = getUserRole(email);
 
-        const token = jwt.sign(
-            {   id:user.id,
-                email: user.email,
-                role:role
+      const token = jwt.sign({
 
-            },
-            process.env.JWT_SECRET,
-            {expiresIn: "1h"}
+    email: String(user.email),
 
-        );
+    role: role
+
+}, process.env.JWT_SECRET);
         res.json({
         message:"Login Successful",
         token: token,
         role:role
        });
+      
         
      });
 
@@ -153,7 +151,7 @@ app.post("/tasks", authenticationToken, (req, res) =>{
    
             }
 
-            const sql ="INSERT INTO tblTasks (task_description,department,date_task,employee_Id, assigned_by)  VALUES (?,?,?,?,?)"
+            const sql ="INSERT INTO tblTasks (task_description,department,date_task,employee_Id, assigned_by)  VALUES (?,?,?,?,?)";
             
             const values= 
                 [
@@ -187,11 +185,10 @@ app.post("/tasks", authenticationToken, (req, res) =>{
         console.error(error);
         res.status(500).send("Server error");
     }
-});
+})
+;
 
-
-
-app.post("/leave", authenticationToken,(req, res) => {
+app.post("/leave", authenticationToken, (req, res) => {
 
     const {
         start_date,
@@ -202,10 +199,12 @@ app.post("/leave", authenticationToken,(req, res) => {
         manager_comment,
         department
     } = req.body;
- const employee_Id = req.user.email;
+
+    const employee_Id = req.user.email;
+
     try {
-   
-        if (!start_date || !end_date) {
+
+        if (!start_date || !end_date || !reason) {
             return res.status(400).send("Missing required fields");
         }
 
@@ -213,40 +212,45 @@ app.post("/leave", authenticationToken,(req, res) => {
             Math.floor(
                 (new Date(end_date) - new Date(start_date)) /
                 (1000 * 60 * 60 * 24)
-            ) +1;
+            ) + 1;
 
-       const leaveBalance = 
-       Math.floor(
-        15 - total_days
-       );
-            
-        const sql =  "INSERT INTO tblLeave  (start_date, end_date, total_days, reason, leave_type, status, manager_comment,employee_Id,leaveBalance,department) VALUES (?, ?,?, ?, ?, ?, ?, ?, ?,?)";
-        
+        const leaveBalance = 15 - total_days;
+
+       
+        let leave_type_clean = (leave_type || "annual").toLowerCase();
+
+        if (!["annual", "sick", "casual"].includes(leave_type_clean)) {
+            return res.status(400).send("Invalid leave type");
+        }
+
+        const sql = `
+            INSERT INTO tblLeave  
+            (start_date, end_date, total_days, reason, leave_type, status, manager_comment, employee_Id, leaveBalance, department)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
 
         const values = [
             start_date,
             end_date,
             total_days,
-            reason || null,
-            leave_type || "Annual",
-            status || "Pending",
+            reason,
+            leave_type_clean,
+            status || "pending",
             manager_comment || null,
             employee_Id,
             leaveBalance,
             department
         ];
 
-        
         db.query(sql, values, (err, result) => {
-            console.log("DB query called");
 
             if (err) {
-                console.error(err);
-                return res.status(500).send("Database error");
+                console.error("DB ERROR:", err.sqlMessage);
+                return res.status(500).send(err.sqlMessage);
             }
 
-            console.log("Leave inserted:", result.insertId);
-            res.send({
+            res.json({
+                success: true,
                 message: "Leave stored successfully!",
                 application_id: result.insertId
             });
@@ -261,17 +265,15 @@ app.post("/leave", authenticationToken,(req, res) => {
 app.post("/tasksFed", authenticationToken,(req, res) => {
 
 
-      const  employee_Id = req.user.email;
-    
     const{task_Id ,feedback } = req.body;
 
     try{
         if(!feedback){
             return res.status(400).send("Feedback not Found");
         }
-        const sql = "UPDATE tblTasks SET feedback = ? WHERE  task_Id = ? AND employee_Id = ?";
+        const sql = "UPDATE tblTasks SET feedback = ? WHERE  task_Id = ?";
     
-         db.query(sql,[feedback,task_Id,employee_Id], (err,result) =>
+         db.query(sql,[feedback,task_Id], (err,result) =>
          {
                   console.log("update query called");
 
@@ -375,40 +377,68 @@ app.post("/taskschal", authenticationToken, (req, res) => {
     
 });
 
-app.post("/leaveStutusApp",(req, res) =>{
-   
-      const{application_id, status} = req.body;
-  try{
-           if (!application_id) {
-        return res.status(400).send("Application ID is required");
-    }
-            if(!status){
-                res.status(400).send("Status is required");
-              }
-         const  sql = "UPDATE tblLeave SET status = ? WHERE application_id = ?";
-            db.query(sql,[status, application_id], (err,result) =>{
-                console.log("Update successful!!")
 
-                if(err){
-                    return res.status(500).send("Database error");
-                }
-                if(result.affectedRows === 0){
-                return res.status(404).send("Status not Found");
-
-             }
-            });
             
+app.post("/leaveStutusApp", authenticationToken, (req, res) => {
 
-                res.send({
-                    message: "Status Updated Succesfully",
-                    status :status,
-                    application_id: application_id
+    const { application_id, status } = req.body;
+
+    try {
+
+        if (!application_id) {
+            return res.status(400).json({
+                success: false,
+                message: "Application ID is required"
+            });
+        }
+
+        if (!status) {
+            return res.status(400).json({
+                success: false,
+                message: "Status is required"
+            });
+        }
+
+        const sql =
+            "UPDATE tblLeave SET status = ? WHERE application_id = ?";
+
+        db.query(sql, [status, application_id], (err, result) => {
+
+            if (err) {
+                console.error(err);
+                return res.status(500).json({
+                    success: false,
+                    message: "Database error"
                 });
- }catch(error){
-        console.log(error);
-        res.status(500).send("Server Error");
-    }
+            }
 
+            if (result.affectedRows === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Leave application not found"
+                });
+            }
+
+            console.log("Update successful!!");
+
+            res.json({
+                success: true,
+                message: "Status Updated Successfully",
+                status: status,
+                application_id: application_id
+            });
+
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error"
+        });
+    }
 });
 
 app.post("/updateLeaveStatus", (req, res) => {
@@ -446,47 +476,69 @@ app.post("/updateLeaveStatus", (req, res) => {
     });
 });
 
-app.get("/leaveStatusInt",authenticationToken, (req, res) =>{
+app.get("/leaveStatusInt", authenticationToken, (req, res) => {
 
-const employee_Id = req.user.email;
+    console.log(req.user);
 
-   const  sql = "SELECT * FROM tblLeave WHERE employee_Id = ?";
+    const employee_Id = req.user.email;
 
-   if (!employee_Id) {
+    if (!employee_Id) {
 
         return res.status(400).json({
-            success:false,
-            message:"Employee Does not exist"
-            
+
+            success: false,
+
+            message: "Employee ID missing in token"
 
         });
     }
 
-    db.query(sql,[employee_Id], (err, results) => {
-        if (err) return res.status(500).json({ success: false, message: "Database error" });
+    const sql = "SELECT * FROM tblLeave WHERE employee_Id = ?";
+
+    db.query(sql, [employee_Id], (err, results) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.status(500).json({
+
+                success: false,
+
+                message: "Database error"
+
+            });
+        }
 
         res.status(200).json({
+
             success: true,
+
             data: results
-           
+
         });
+
     });
+
 });
 
-app.get("/leavesDep", (req, res) =>{
+app.get("/leavesDep", authenticationToken, (req, res) =>{
 
     const department = req.query.department;
 
-    let sql = "SELECT * FROM tblLeave WHERE department = ? ";
+    const sql = "SELECT application_id, start_date, end_date,leave_type,reason,department,status FROM tblLeave WHERE department = ? ";
 
   if (!department) {
        return res.status(400).json({
+
         success :false,
+
         message:"department not found"
        })
     }
  
     db.query(sql, [department], (err, results ) => {
+
         if(err) return res.status(500).json({ success : false, message : "Database error"});
 
             res.status(200).json({
@@ -498,6 +550,7 @@ app.get("/leavesDep", (req, res) =>{
 });
 
 app.get("/tasksREsEmpl",authenticationToken, (req, res) => {
+
     const employee_Id = req.user.email;  
 
     let sql = "SELECT task_Id, task_description, department, employee_Id, date_task, challenges, feedback FROM tblTasks WHERE employee_Id = ?";
