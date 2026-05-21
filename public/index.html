@@ -10,22 +10,47 @@
             font-family: Arial, sans-serif;
             background: #f4f6f9;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            margin:0;
+            min-height: 100vh;
             height: 100vh;
         }
-         .loginContainer{ background: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 350px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);}
-        .container{
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 350px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        form{ 
+           display: none;
+           position: fixed;   
+           top: 50%;
+           left: 50%;
+           transform: translate(-50%, -50%);
+           z-index: 1000;
+
+           background: white;
+           padding: 30px;
+           border-radius: 10px;
+           width: 350px;
+           box-shadow: 0px 0px 10px rgba(0,0,0,0.2); }
+      .button-Container {
+            position:absolute;
+            top:20px;
+            right:20px;
+            display:flex;
+            gap:10px;
+          }
+
+     .button-Container button{
+            padding:10px 20px;
+            margin-left:10px;
+            border:none;
+            background:green;
+            color:white;
+            border-radius:5px;
+            cursor:pointer;
         }
+
+     .button-Container button:hover{
+               opacity:0.9;
+                background:#0d523b;
+       }
+
+        
 
         h2{
             text-align: center;
@@ -51,34 +76,110 @@
             cursor: pointer;
         }
 
-        button:hover{
-            background: darkgreen;
-        }
+        
+   .welcome-container{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 500px;
+}
+
+.center-image{
+    width: 250px;
+    height: 150px;
+    border-radius:none;
+  
+   }
+   .page{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+hr{
+    margin: 20px auto;
+    width: 80%;
+    border: 1px solid #ddd;
+}
+
+.greetings{
+    font-size: 20px;
+    font-weight: bold;
+    color: green;
+    margin-bottom: 15px;
+}
+.welcome-paragraph{
+    font-size: 15px;
+    color: #555;
+    line-height: 1.6;
+    width: 90%;
+    margin: auto;
+    
+}
+
+.button-Container{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+
+
     </style>
 </head>
 
 <body>
+ 
+<div class="page">
+  <div class="welcome-container">
 
-    <div  class = "loginContainer">
-          <h2>Login</h2>
-           <form id="loginForm">
+    <img src="logo.webp" alt="Welcome" class="center-image">
+
+  
+    <hr>
+
+   
+    <div class="greetings">
+        <span>Welcome</span> |
+        <span>Re a go amogela</span> |
+        <span>Amukeriwile</span> |
+        
+    </div>
+
+  
+    <p class="welcome-paragraph">
+        Welcome to IMS platform. We are delighted to have you here.
+        Please register or login to continue and explore our services.
+    </p>
+
+</div>
+
+     <div class="button-Container">
+        <button onclick="showForm('register')">Register</button>
+        <button onclick="showForm('login')">Login</button>
+     </div>
+
+    </div>
+
+      
+
+           <form id="loginForm" style="display:none;" >
+                <h2>Login</h2>
 
          <input type="email" name="email" placeholder="Email" required>
          <input type="password" name="password" placeholder="password" required>
 
          <button type="submit">Login</button>
+
     </form>
-    </div>
-   
-   
-<div class="container">
   
-    <h2>Register</h2>
 
-    
-
-    <form id="registerForm">
-
+    <form id="registerForm" style="display:none;">
+            <h2>Register</h2>
         <input type="email" name="email" placeholder="Email" required>
 
         <input type="password" name="password" placeholder="Password" required>
@@ -104,6 +205,29 @@
 <script>
 
 const API_URL = "http://localhost:3000";
+
+
+function showForm(type){
+
+    const registerForm= document.getElementById("registerForm");
+
+    const loginForm= document.getElementById("loginForm");
+
+
+    registerForm.style.display ="none";
+    loginForm.style.display ="none";
+
+
+    if(type === "register"){
+
+        registerForm.style.display ="block";
+
+    }else if(type === "login"){
+        loginForm.style.display ="block";
+    }
+
+
+}
 
 document.getElementById("loginForm").addEventListener("submit",  async function(e)  {
     
@@ -142,6 +266,9 @@ document.getElementById("loginForm").addEventListener("submit",  async function(
 
                  } else if(data.role === "supervisor"){
                     window.location.href ="supervisor.html";
+
+                 } else if(data.role === "admin"){
+                    window.location.href ="admin.html";
 
                  }else{
                     alert("Unknown Role");

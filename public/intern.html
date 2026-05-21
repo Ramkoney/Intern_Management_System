@@ -34,22 +34,66 @@ body{
 }
 
 .menu{
-    display:flex;
-    gap:15px;
+    width: 250px;
+    height:100vh;
+    background: #1e293b;
+    padding: 20px;
+
+    position:fixed;
+    right:0;
+    top:0;
+
+    z-index:1000;
+
+    transform: translateX(0);
+    transition: transform 0.4s ease;
+
+    box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+    
+}
+
+.menu.hide{
+    transform: translateX(100%);
+}
+
+.menu h2{
+    color:white;
+    text-align: center;
+    margin-bottom: 30px;
 }
 
 .menu button{
-    background:white;
-    color:#116d4e;
+    width: 100%;
+    padding: 15px;
+    margin-bottom:15px;
+
+    background:#334155;
+    color:white;
+
     border:none;
-    padding:10px 15px;
-    border-radius:5px;
+    border-radius:8px;
+
     cursor:pointer;
-    font-weight:bold;
+    font-size:16px;
+
+    transition: 0.3s;
 }
 
 .menu button:hover{
-    background:#e7e7e7;
+    background:#116d4e;
+}
+
+.overlay{
+    position:fixed;
+    top: 0;
+    left:0;
+    width:100%;
+    height: 100%;
+
+    background: rgba(0,0,0,0.4);
+
+    z-index: 999;
+    display: none;
 }
 
 
@@ -151,8 +195,12 @@ th{
 <div class="navbar">
 
     <div class="logo">Intern Dashboard</div>
+     <button onclick="toggleMenu()" class="toggle-btn">☰ Menu</button>
+     <div class="overlay" onclick="closeMenu()"></div>
 
-    <div class="menu">
+</div>
+
+    <div class="menu hide">
         <button onclick="showSection('tasksSection');mytasks();">View Tasks</button>
 
         <button onclick="showSection('leaveSection')">Apply Leave</button>
@@ -161,18 +209,34 @@ th{
             My Leaves
         </button>
 
-
-
         <button class="logout-btn" onclick="signout()">
             Sign Out
         </button>
-    </div>
-
+ 
 </div>
 
 <div class="container">
 
-    
+     <div id="reportContainer" style="display:none;">
+
+        <h3>Submit Task Report</h3>
+
+        <input type="hidden" id="taskId">
+
+        <label>Task Progress</label>
+
+<select id="challengeInput">
+    <option value="">Select Status</option>
+    <option value="Complete">Complete</option>
+    <option value="Need Support">Need Support</option>
+    <option value="In Progress">In Progress</option>
+</select>
+
+        <button class="action-btn" onclick="sendReport()">
+            Send Report
+        </button>
+
+    </div>
 
     <div id="tasksSection" class="section active">
 
@@ -194,25 +258,7 @@ th{
 
     </div>
 
-  
-
-    <div id="reportContainer" style="display:none;">
-
-        <h3>Submit Task Report</h3>
-
-        <input type="hidden" id="taskId">
-
-        <input 
-            type="text" 
-            id="challengeInput" 
-            placeholder="Write your report here"
-        >
-
-        <button class="action-btn" onclick="sendReport()">
-            Send Report
-        </button>
-
-    </div>
+   
 
   
 
@@ -228,13 +274,13 @@ th{
 
             <input type="text" name="reason" placeholder="Reason" required>
 
-            <input 
-                type="text" 
-                name="leave_type" 
-                placeholder="Sick / Annual / Casual" 
-                required
-            >
-
+            <select id="leave_type">
+     <option value="">Leave Type</option>
+   
+     <option value="Sick">Sick</option>
+     <option value="Annual">Annual</option>
+     <option value="Casual">Casual</option>
+    </select>
             <input 
                 type="text" 
                 name="department" 
@@ -619,6 +665,29 @@ window.onload = function(){
     setInterval(mytasks, 10000);
 };
 
+function toggleMenu(){
+ const menu=document.querySelector(".menu");
+ const overlay =document.querySelector(".overlay");
+
+ menu.classList.toggle("hide");
+
+ if(menu.classList.contains("hide")){
+    overlay.style.display="none";
+ }
+ else{
+    overlay.style.display="block";
+ }
+
+}
+
+
+function  closeMenu(){
+      const menu= document.querySelector(".menu");
+      const overlay= document.querySelector(".overlay");
+
+      menu.classList.add("hide");
+      overlay.style.display ="none";
+}
 </script>
 
 </body>

@@ -59,12 +59,17 @@ app.post("/register", async (req, res) => {
 
 const getUserRole =(email) =>{
 
+    console.log("Email:", email);
+    
     if(email.includes("intern")){
 
         return "intern";
     } 
     else if(email.includes("cdm")){
         return "supervisor";
+        
+    }else if(email.includes("admin")){
+        return "admin";
     }
     else{
         return "user";
