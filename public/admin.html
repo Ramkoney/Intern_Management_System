@@ -31,27 +31,58 @@ body{
 .logo{
     font-size:22px;
     font-weight:bold;
+     padding:30px;
 }
 
 .menu{
-    display:flex;
-    gap:15px;
+    width:250px;
+    height:100vh;
+    background:#1e293b;
+    padding:20px;
+
+    position:fixed;
+    right:0;
+    top:0;
+
+    z-index:1000;
+
+    transform:translateX(0);
+    transition:transform 0.4s ease;
+    box-shadow:-5px 0 15px rgba(0,0,0,0.2);
 }
 
 .menu button{
-    background:white;
-    color:#116d4e;
+    width:100%;
+    padding:15px;
+    margin-bottom:15px;
+
     border:none;
-    padding:10px 15px;
-    border-radius:5px;
+    border-radius:8px;
+
+    background:#334155;
+    color:white;
+
     cursor:pointer;
-    font-weight:bold;
+    font-size:16px;
+
+    transition:0.3s;
 }
+
 
 .menu button:hover{
     background:#e7e7e7;
 }
 
+.menu.hide{
+    transform:translateX(100%);
+}
+
+
+.menu h2{
+    color:white;
+    text-align:center;
+    margin-bottom:30px;
+}
 
 
 .container{
@@ -194,8 +225,65 @@ th{
     min-width: 200px;
 }
 
+.menu button{
+    width:100%;
+    padding:15px;
+    margin-bottom:15px;
 
-   
+    border:none;
+    border-radius:8px;
+
+    background:#334155;
+    color:white;
+
+    cursor:pointer;
+    font-size:16px;
+
+    transition:0.3s;
+}
+
+.menu button:hover{
+    background:#0b634b;
+}
+
+.overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0,0,0,0.4);
+    z-index: 999;
+
+    display: none;
+}
+
+.toggle-btn{
+    background:#1e293b;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    cursor:pointer;
+    border-radius:5px;
+}
+   .image-right{
+    width: 50px;
+    height: 50px;
+    
+    left: 10px;
+    position: absolute;
+    top: 20px;
+    display: flex;
+  
+   }
+
+   .pic{
+    width: 250px;
+    height:250px;
+    bottom: auto;
+
+}
 
 </style>
 </head>
@@ -206,21 +294,32 @@ th{
 
 <div class="navbar">
 
+  
+
+     <img src="logo.webp" alt="logo" class="image-right">
     <div class="logo">Admin Dashboard</div>
+     <button onclick="toggleMenu()" class="toggle-btn">☰ Menu</button>
+     <div class="overlay" onclick="closeMenu()"></div>
+    </div>
 
-
-    <div class="menu">
+    <div class="menu hide">
         <button onclick="showSection('tasksSection');mytasks();">All Tasks</button>
 
         <button onclick="showSection('myLeaveSection'); myLeave();">
             All Leaves
         </button>
-
+        
+         <button onclick="showSection('myUserSection'); myUsers();">
+            All Users
+        </button>
 
 
         <button class="logout-btn" onclick="signout()">
             Sign Out
         </button>
+
+        <img src="Capricorn-District-Municipality.jpg" alt="icon" class="pic">
+
 
         
     </div>
@@ -251,7 +350,28 @@ th{
 
     </div>
 
-   
+   <div id="myUserSection" class="section">
+
+        <h2>All Users Applications</h2>
+
+        <table id="userTable">
+
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Department</th>
+                    
+                </tr>
+            </thead>
+
+            <tbody></tbody>
+
+        </table>
+
+    </div>
+
 
 
     <div id="myLeaveSection" class="section">
@@ -344,6 +464,26 @@ async function mytasks(){
     }
 }
 
+function toggleMenu(){
+    const menu = document.querySelector(".menu");
+    const overlay = document.querySelector(".overlay");
+
+    menu.classList.toggle("hide");
+
+    if(menu.classList.contains("hide")){
+        overlay.style.display = "none";
+    } else {
+        overlay.style.display = "block";
+    }
+}
+
+function closeMenu(){
+    const menu = document.querySelector(".menu");
+    const overlay = document.querySelector(".overlay");
+
+    menu.classList.add("hide");
+    overlay.style.display = "none";
+}
 
 
 function renderTasks(tasks){
@@ -381,6 +521,39 @@ function renderTasks(tasks){
     });
 }
 
+
+async function myUsers(){
+    const token =localStorage.getItem("token");
+    if(!token){
+
+        alert("Please Login First");
+        return;
+    }
+try{
+    const response = await fetch(`${API_URL}/users`,{
+                headers:{
+                     "Authorization": `Bearer ${token}`
+                }
+    });
+
+     const data = await response.json();
+
+        if(data.success){
+
+            renderUsers(data.data);
+
+        }else{
+
+            alert(data.message || "Failed");
+        }
+
+    }catch(error){
+
+        console.log(error);
+
+        alert("Server Error");
+    }
+}
 async function myLeave(){
 
     const token = localStorage.getItem("token");
@@ -421,6 +594,37 @@ async function myLeave(){
     }
 }
 
+function renderUsers(users){
+    const tbody =document.querySelector("#userTable  tbody");
+    tbody.innerHTML="";
+
+    if(users.length ===0){
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4">No Users  Found</td>
+            </tr>
+        `;
+        return;
+    }
+
+   users.forEach(user => {
+
+        tbody.innerHTML += `
+
+            <tr>
+                <td>${user.email}</td>
+                <td>${user.empname}</td>
+                <td>${user.surname}</td>
+                <td>${user.department}</td>
+            
+
+            </tr>
+        `;
+    });
+
+    
+}
 
 
 function renderLeaves(leaves){
@@ -472,6 +676,7 @@ window.onload = function(){
    myLeave();
 
     mytasks();
+    myUsers();
 
     setInterval(mytasks, 10000);
 };

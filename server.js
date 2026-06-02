@@ -716,6 +716,18 @@ app.get("/leave",authenticationToken, (req,res) => {
 
 });
 
+app.get("/users",authenticationToken,(req,res)=>{
+    let sql ="SELECT email,empname,surname,department FROM users";
+    db.query(sql,(err,results)=>{
+        if(err) return res.status(500).json({success: false, message: "Database error"});
+        res.status(200).json({
+            success:true,
+            data:results
+        });
+    });
+
+})
+
 app.get("/", (req, res) => {
     res.send("MY SERVER IS DEFINITELY RUNNING");
 });
