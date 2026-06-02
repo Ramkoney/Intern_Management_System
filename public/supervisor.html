@@ -33,6 +33,7 @@ body{
 .logo{
     font-size:22px;
     font-weight:bold;
+    padding:30px;
 }
 
 
@@ -60,6 +61,12 @@ body{
     transform:translateX(0);
     transition:transform 0.4s ease;
     box-shadow:-5px 0 15px rgba(0,0,0,0.2);
+}
+.pic{
+    width: 250px;
+    height:250px;
+    bottom: auto;
+
 }
 
 
@@ -187,13 +194,63 @@ th{
     color:white !important;
 }
 
+.footer{
+    background: #1f2937;
+    color: white;
+    padding: 80px 20px;
+    margin-top: auto;
+}
+.footer-section h3 {
+    margin-bottom: 15px;
+    color: #facc15;
+    font-size: 18px;
+}
+
+.footer-section p {
+    margin: 5px 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid #4b5563;
+    margin-top: 20px ;
+    padding-top: 15px;
+    font-size: 14px;
+}
+.footer-container{
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.footer-section{
+    flex:1;
+    min-width: 200px;
+}
+
+
+   
+.image-right{
+    width: 50px;
+    height: 50px;
+    
+    left: 10px;
+    position: absolute;
+    top: 20px;
+    display: flex;
+  
+   }
 </style>
 </head>
 
 <body>
 
 <div class="navbar">
-
+  
+    <img src="logo.webp" alt="logo" class="image-right">
     <div class="logo">Supervisor Dashboard</div>
      <button onclick="toggleMenu()" class="toggle-btn">☰ Menu</button>
      <div class="overlay" onclick="closeMenu()"></div>
@@ -217,6 +274,9 @@ th{
         <button class="logout-btn" onclick="logout()">
             Sign Out
         </button>
+
+
+        <img src="Capricorn-District-Municipality.jpg" alt="icon" class="pic">
 
     </div>
 
@@ -657,6 +717,39 @@ function closeMenu(){
 
 
 </script>
+
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-section">
+            <h3>PHYSICAL ADDRESS</h3>
+            <p>41 Biccard Street</p>
+            <p>Polokwane</p>
+            <p>0700</p>
+        </div>
+
+        <div class="footer-section">
+            <h3>POSTAL ADDRESS</h3>
+            <p>P.O.Box 4100</p>
+            <p>Polokwane</p>
+            <p>0700</p>
+        </div>
+
+        <div class="footer-section">
+            <h3>CONTACT DETAILS</h3>
+            <p>Tel. (015) 294 1000</p>
+            <p>Fax. (015) 291 4297</p> 
+            <p>Email. info@cdm.org.za</p>
+            <p>www.cdm.org.za</p>
+        </div>
+
+
+    </div>
+
+    <div class="footer-bottom">
+     <p>© Copyright 2026 Masola RR |  All Rights Reserved. Capricorn District Municipality</p>
+</div>
+</footer>
 
 </body>
 </html>

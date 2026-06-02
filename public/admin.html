@@ -141,6 +141,62 @@ th{
     color:white !important;
 }
 
+.footer{
+    background: #1f2937;
+    color: white;
+    padding: 80px 20px;
+    margin-top: auto;
+}
+.footer-section h3 {
+    margin-bottom: 15px;
+    color: #facc15;
+    font-size: 18px;
+}
+
+.footer-section p {
+    margin: 5px 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid #4b5563;
+    margin-top: 20px ;
+    padding-top: 15px;
+    font-size: 14px;
+}
+.footer-container{
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.image-right{
+    width: 50px;
+    height: 50px;
+    border-radius:200px;
+    left: 20px;
+    position: absolute;
+    top: 20px;
+    display: flex;
+  
+   }
+.pic{
+    width: 250px;
+    height:250px;
+    bottom: auto;
+
+}
+.footer-section{
+    flex:1;
+    min-width: 200px;
+}
+
+
+   
+
 </style>
 </head>
 
@@ -151,6 +207,7 @@ th{
 <div class="navbar">
 
     <div class="logo">Admin Dashboard</div>
+
 
     <div class="menu">
         <button onclick="showSection('tasksSection');mytasks();">All Tasks</button>
@@ -164,6 +221,8 @@ th{
         <button class="logout-btn" onclick="signout()">
             Sign Out
         </button>
+
+        
     </div>
 
 </div>
@@ -418,6 +477,38 @@ window.onload = function(){
 };
 
 </script>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-section">
+            <h3>PHYSICAL ADDRESS</h3>
+            <p>41 Biccard Street</p>
+            <p>Polokwane</p>
+            <p>0700</p>
+        </div>
+
+        <div class="footer-section">
+            <h3>POSTAL ADDRESS</h3>
+            <p>P.O.Box 4100</p>
+            <p>Polokwane</p>
+            <p>0700</p>
+        </div>
+
+        <div class="footer-section">
+            <h3>CONTACT DETAILS</h3>
+            <p>Tel. (015) 294 1000</p>
+            <p>Fax. (015) 291 4297</p> 
+            <p>Email. info@cdm.org.za</p>
+            <p>www.cdm.org.za</p>
+        </div>
+
+
+    </div>
+
+    <div class="footer-bottom">
+     <p>© Copyright 2026 Masola RR |  All Rights Reserved. Capricorn District Municipality</p>
+</div>
+</footer>
 
 </body>
 </html>

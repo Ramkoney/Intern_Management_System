@@ -1,0 +1,104 @@
+Database tables for my Project 
+
+CREATE TABLE devices (
+    device_id INT AUTO_INCREMENT PRIMARY KEY,
+    device_name VARCHAR(100),
+    device_type ENUM('switch', 'router', 'server', 'firewall', 'access_point'),
+    ip_address VARCHAR(45),
+    mac_address VARCHAR(50),
+    location_id INT,
+    status ENUM('active', 'inactive', 'faulty'),
+    vendor VARCHAR(100),
+    model VARCHAR(100),
+    purchase_date DATE,
+    warranty_expiry DATE
+);
+
+
+CREATE TABLE locations (
+    location_id INT AUTO_INCREMENT PRIMARY KEY,
+    building_name VARCHAR(100),
+    room VARCHAR(100),
+    floor INT,
+    department VARCHAR(100)
+);
+
+CREATE TABLE network_usage (
+    usage_id INT AUTO_INCREMENT PRIMARY KEY,
+    device_id INT,
+    usage_date DATE,
+    data_in_gb DECIMAL(10,2),
+    data_out_gb DECIMAL(10,2),
+    total_data_gb DECIMAL(10,2),
+    FOREIGN KEY (device_id) REFERENCES devices(device_id)
+);
+
+CREATE TABLE costs (
+    cost_id INT AUTO_INCREMENT PRIMARY KEY,
+    device_id INT NULL,
+    cost_type ENUM('purchase', 'maintenance', 'data_usage', 'security', 'upgrade'),
+    amount DECIMAL(10,2),
+    description TEXT,
+    cost_date DATE,
+    recurring BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (device_id) REFERENCES devices(device_id)
+);
+
+CREATE TABLE security_services (
+    service_id INT AUTO_INCREMENT PRIMARY KEY,
+    service_name VARCHAR(100),
+    provider VARCHAR(100),
+    service_type ENUM('firewall', 'antivirus', 'vpn', 'monitoring', 'siem'),
+    monthly_cost DECIMAL(10,2),
+    start_date DATE,
+    expiry_date DATE
+);
+
+CREATE TABLE security_incidents (
+    incident_id INT AUTO_INCREMENT PRIMARY KEY,
+    device_id INT,
+    incident_type VARCHAR(100),
+    severity ENUM('low', 'medium', 'high', 'critical'),
+    description TEXT,
+    detected_at DATETIME,
+    resolved BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (device_id) REFERENCES devices(device_id)
+);
+
+CREATE TABLE security_costs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    service_id INT,
+    cost_id INT,
+    FOREIGN KEY (service_id) REFERENCES security_services(service_id),
+    FOREIGN KEY (cost_id) REFERENCES costs(cost_id)
+);
+
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    password_hash VARCHAR(255),
+    role ENUM('admin', 'technician', 'viewer')
+);
+
+CREATE TABLE audit_logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    action VARCHAR(255),
+    target VARCHAR(255),
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ip_address VARCHAR(45),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE packet_loss_metrics (
+    metric_id INT AUTO_INCREMENT PRIMARY KEY,
+    device_id INT,
+    interface_name VARCHAR(100),
+    packets_sent BIGINT,
+    packets_received BIGINT,
+    packets_lost BIGINT,
+    packet_loss_percentage DECIMAL(5,2),
+    measured_at DATETIME,
+    FOREIGN KEY (device_id) REFERENCES devices(device_id)
+);

@@ -531,7 +531,7 @@ app.get("/leavesDep", authenticationToken, (req, res) =>{
 
     const department = req.query.department;
 
-    const sql = "SELECT application_id, start_date, end_date,leave_type,reason,department,status FROM tblLeave WHERE department = ? ";
+    const sql = "SELECT application_id, start_date, end_date,leave_type,reason,leaveBalance,department,status FROM tblLeave WHERE department = ? ";
 
   if (!department) {
        return res.status(400).json({
@@ -678,7 +678,7 @@ app.get("/challenges", (req,res) => {
 
 });
 
-app.get("/alltasks", (req,res) => {
+app.get("/alltasks",authenticationToken, (req,res) => {
 
     const task_Id = req.query.task_Id;
 
@@ -702,7 +702,7 @@ app.get("/alltasks", (req,res) => {
 
 });
 
-app.get("/leave", (req,res) => {
+app.get("/leave",authenticationToken, (req,res) => {
 
     let sql ="SELECT * FROM tblLeave";
     db.query(sql,(err,results)=>{
