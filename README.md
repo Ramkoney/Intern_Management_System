@@ -13,14 +13,12 @@ JWT
 Node.js
 express
 
+<img width="1838" height="863" alt="Screenshot (35)" src="https://github.com/user-attachments/assets/f71731d4-d3f9-4e55-96a2-f9000c18f55d" />
 <img width="1866" height="891" alt="Screenshot (57)" src="https://github.com/user-attachments/assets/b312f1c0-fcfc-4b0d-a37b-d75bf1d893dd" />
 <img width="1856" height="913" alt="Screenshot (54)" src="https://github.com/user-attachments/assets/82262767-2472-4762-ab89-ad3b6a67f25b" />
 <img width="1920" height="1080" alt="Screenshot (55)" src="https://github.com/user-attachments/assets/e241b1ea-3412-466a-b005-fd94e5967e26" />
 <img width="1850" height="843" alt="Screenshot (56)" src="https://github.com/user-attachments/assets/68817ec0-a8ab-4bb9-8342-16814b7e7076" />
 
-<img width="1838" height="863" alt="Screenshot (35)" src="https://github.com/user-attachments/assets/f71731d4-d3f9-4e55-96a2-f9000c18f55d" />
-
-<img width="1888" height="873" alt="Screenshot (36)" src="https://github.com/user-attachments/assets/f39df9f3-a6f4-427c-b972-99cc4225a15a" />
 
 <img width="1843" height="887" alt="Screenshot (34)" src="https://github.com/user-attachments/assets/7645533e-1fc1-4bed-9191-28207615c984" />
 
