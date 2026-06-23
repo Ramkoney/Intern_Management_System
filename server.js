@@ -481,6 +481,68 @@ app.post("/updateLeaveStatus", (req, res) => {
     });
 });
 
+
+app.use(express.json());
+
+
+
+app.post("/attendance", authenticationToken, (req, res) => {
+
+    const email = req.body;
+
+    const { latitude, longitude, action } = req.body;
+
+    console.log("ATTENDANCE REQUEST:", req.body);
+
+    const now = new Date();
+
+    const date = now.toISOString().split("T")[0];
+    const time = now.toTimeString().split(" ")[0];
+
+    let status = "";
+
+    const totalMinutes = now.getHours() * 60 + now.getMinutes();
+
+    if (action === "Clock In") {
+        if (totalMinutes < 465) status = "Early";
+        else if (totalMinutes <= 480) status = "On Time";
+        else status = "Late";
+    }
+
+    if (action === "Clock Out") {
+        if (totalMinutes < 990) status = "Left Early";
+        else status = "Completed Shift";
+    }
+
+    const sql = `
+        INSERT INTO attendance_register
+        (email, latitude, longitude, action, status, date, time)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(sql,
+        [email, latitude, longitude, action, status, date, time],
+        (err, result) => {
+
+            if (err) {
+                console.log("SQL ERROR:", err);
+                return res.status(500).json({ error: err.message });
+            }
+
+            console.log("INSERT OK:", result);
+
+            res.json({
+                success: true,
+                message: "Attendance Saved",
+                status
+            });
+        }
+    );
+});
+    
+
+
+
 app.get("/leaveStatusInt", authenticationToken, (req, res) => {
 
     console.log(req.user);
@@ -727,6 +789,90 @@ app.get("/users",authenticationToken,(req,res)=>{
     });
 
 })
+
+app.post("/attendance/checkin", authenticationToken, async (req, res) => {
+
+    const email = req.user.email;
+    const { latitude, longitude, faceDescriptor } = req.body;
+
+    if (!latitude || !longitude || !faceDescriptor) {
+        return res.status(400).json({
+            success: false,
+            message: "Missing data"
+        });
+    }
+
+   
+    const officeLat = -23.9045;
+    const officeLng = 29.4689;
+    const radius = 0.01;
+
+    const gpsValid =
+        Math.abs(latitude - officeLat) < radius &&
+        Math.abs(longitude - officeLng) < radius;
+
+    let gps_status = gpsValid ? "valid" : "invalid";
+
+   
+
+    const sqlUser = "SELECT face_descriptor FROM users WHERE email = ?";
+
+    db.query(sqlUser, [email], (err, result) => {
+
+        if (err) {
+            return res.status(500).json({ message: "DB error" });
+        }
+
+        if (result.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const storedDescriptor = JSON.parse(result[0].face_descriptor || "[]");
+
+        function euclideanDistance(a, b) {
+            let sum = 0;
+            for (let i = 0; i < a.length; i++) {
+                sum += Math.pow(a[i] - b[i], 2);
+            }
+            return Math.sqrt(sum);
+        }
+
+        const distance = euclideanDistance(faceDescriptor, storedDescriptor);
+
+        const face_status = distance < 0.6 ? "matched" : "not_matched";
+
+        const attendance_status =
+            gps_status === "valid" && face_status === "matched"
+                ? "present"
+                : "rejected";
+
+       
+
+        const sqlInsert = `
+            INSERT INTO attendance
+            (email, check_in, latitude, longitude, gps_status, face_status, attendance_status)
+            VALUES (?, NOW(), ?, ?, ?, ?, ?)
+        `;
+
+        db.query(sqlInsert,
+            [email, latitude, longitude, gps_status, face_status, attendance_status],
+            (err2, result2) => {
+
+                if (err2) {
+                    return res.status(500).json({ message: "Insert error" });
+                }
+
+                res.json({
+                    success: true,
+                    message: "Attendance recorded",
+                    gps_status,
+                    face_status,
+                    attendance_status
+                });
+            }
+        );
+    });
+});
 
 app.get("/", (req, res) => {
     res.send("MY SERVER IS DEFINITELY RUNNING");

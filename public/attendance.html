@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>intern Register</title>
+   <link rel ="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="navbar">
+
+     <div class="logo">
+        
+        <img src="logo.webp" alt="logo" class="image-right">
+    
+    </div>
+    
+     <button onclick="toggleMenu()" class="toggle-btn">☰ Menu</button>
+     <div class="overlay" onclick="closeMenu()"></div>
+</div>
+   <div class="menu hide">
+         <button class="homepage" onclick="returnhome()">
+           My Home
+        </button>
+</a>
+        <button class="logout-btn" onclick="signout()">
+            Sign Out
+        </button>
+
+         <img src="Capricorn-District-Municipality.jpg" alt="icon" class="pic">
+
+ 
+</div>
+   
+<div class="container">
+  <h2>Clock Register</h2>
+  
+<input type="email" id="email" placeholder="Enter Email">
+
+<button onclick="clockIn()"> Clock In</button>
+<button onclick="clockOut()"> Clock Out</button>
+
+<p id="message"></p>
+</div>
+
+<script src="attendanceScript.js"></script>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-section">
+            <h3>PHYSICAL ADDRESS</h3>
+            <p>41 Biccard Street</p>
+            <p>Polokwane</p>
+            <p>0700</p>
+        </div>
+
+        <div class="footer-section">
+            <h3>POSTAL ADDRESS</h3>
+            <p>P.O.Box 4100</p>
+            <p>Polokwane</p>
+            <p>0700</p>
+        </div>
+
+        <div class="footer-section">
+            <h3>CONTACT DETAILS</h3>
+            <p>Tel. (015) 294 1000</p>
+            <p>Fax. (015) 291 4297</p> 
+            <p>Email. info@cdm.org.za</p>
+            <p>www.cdm.org.za</p>
+        </div>
+
+
+    </div>
+
+    <div class="footer-bottom">
+     <p>© Copyright 2026 Masola RR |  All Rights Reserved. Capricorn District Municipality</p>
+</div>
+</footer>
+</body>
+</html>
