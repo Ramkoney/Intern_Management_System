@@ -1,5 +1,7 @@
 # Intern_Management_System
-The Intern Management System is a web-based application designed to help organizations manage interns, supervisors, tasks, leave applications, and feedback in a centralized digital platform. The system improves communication between supervisors and interns while simplifying task allocation, progress monitoring, and reporting.  
+The Intern Management System is a web-based application designed to help organizations manage interns, supervisors, attendance,<img 
+
+tasks, leave applications, and feedback in a centralized digital platform. The system improves communication between supervisors and interns while simplifying task allocation, progress monitoring, and reporting.  
 
 
 Tech Stack 
@@ -11,7 +13,10 @@ JWT
 Node.js
 express
 
-
+<img width="1866" height="891" alt="Screenshot (57)" src="https://github.com/user-attachments/assets/b312f1c0-fcfc-4b0d-a37b-d75bf1d893dd" />
+<img width="1856" height="913" alt="Screenshot (54)" src="https://github.com/user-attachments/assets/82262767-2472-4762-ab89-ad3b6a67f25b" />
+<img width="1920" height="1080" alt="Screenshot (55)" src="https://github.com/user-attachments/assets/e241b1ea-3412-466a-b005-fd94e5967e26" />
+<img width="1850" height="843" alt="Screenshot (56)" src="https://github.com/user-attachments/assets/68817ec0-a8ab-4bb9-8342-16814b7e7076" />
 
 <img width="1838" height="863" alt="Screenshot (35)" src="https://github.com/user-attachments/assets/f71731d4-d3f9-4e55-96a2-f9000c18f55d" />
 
