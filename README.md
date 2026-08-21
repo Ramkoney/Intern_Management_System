@@ -3,8 +3,11 @@
 ## System Documentation
 
 **Project:** Intern Management System
+
 **Organization:** Capricorn District Municipality
+
 **Developer:** Masola Ramokone Respector
+
 **Year:** 2026
 
 
