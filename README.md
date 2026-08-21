@@ -345,7 +345,6 @@ Typical database entities:
 
 The system follows a client-server architecture.
 
-```
 ┌───────────────────────────────┐
 │          Web Browser          │
 │                               │
@@ -359,7 +358,7 @@ The system follows a client-server architecture.
 │                               │
 │    Authentication             │
 │    Task Management            │
-│    Leave Management            │
+│    Leave Management           │
 │    Attendance                 │
 └───────────────┬───────────────┘
                 │
@@ -373,7 +372,6 @@ The system follows a client-server architecture.
 │ Leave                         │
 │ Attendance                    │
 └───────────────────────────────┘
-```
 
 
 # 12. Functional Requirements
@@ -464,16 +462,16 @@ Clear error messages should be displayed to the user.
 Testing  be performed to verify that each system function works correctly.
 test cases include:
 
-| Test Case | Action                          Expected Result                    
-| --------- | ------------------------------  ---------------------------------- 
-| TC001     | Login with valid credentials   | User successfully logs in          
-| TC002     | Login with invalid credentials | Error message is displayed         
-| TC003     | Submit leave application       | Leave application is stored        
-| TC004     | View leave applications        | User's leave records are displayed 
-| TC005     | View assigned tasks            | Assigned tasks are displayed       
-| TC006     | Submit task progress           | Task report is submitted           
-| TC007     | Mark attendance                | Attendance record is created       
-| TC008     | Sign out                       | User session is terminated         
+| Test Case | Action                         | Expected Result                    |
+| --------- | ------------------------------ | ---------------------------------- |
+| TC001     | Login with valid credentials   | User successfully logs in          |
+| TC002     | Login with invalid credentials | Error message is displayed         |
+| TC003     | Submit leave application       | Leave application is stored        |
+| TC004     | View leave applications        | User's leave records are displayed |
+| TC005     | View assigned tasks            | Assigned tasks are displayed       |
+| TC006     | Submit task progress           | Task report is submitted           |
+| TC007     | Mark attendance                | Attendance record is created       |
+| TC008     | Sign out                       | User session is terminated         | 
 
 
 
