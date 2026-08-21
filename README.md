@@ -269,42 +269,6 @@ The navigation bar contains:
 
 The menu can be opened and closed using the menu controls.
 
-### 9.2 Dashboard Sections
-
-The dashboard uses separate sections for different functions.
-
-The main sections include:
-
-```
-Intern Dashboard
-│
-├── My Tasks
-│   ├── Task ID
-│   ├── Description
-│   ├── Date
-│   ├── Report
-│   └── Feedback
-│
-├── Apply Leave
-│   ├── Start Date
-│   ├── End Date
-│   ├── Reason
-│   ├── Leave Type
-│   └── Department
-│
-├── My Leave Applications
-│   ├── Leave Code
-│   ├── Dates
-│   ├── Leave Type
-│   ├── Reason
-│   ├── Balance
-│   ├── Department
-│   └── Status
-│
-└── Attendance
-```
-
-
 # 10. Technologies Used
 
 The system uses web technologies for the frontend.
