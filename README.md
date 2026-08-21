@@ -344,36 +344,20 @@ Typical database entities:
 # 11. System Architecture
 
 The system follows a client-server architecture.
-
-┌───────────────────────────────┐
-│          Web Browser          │
-│                               │
-│      HTML / CSS / JavaScript  │
-└───────────────┬───────────────┘
+         1. Web Browser                               
+| HTML | CSS | JavaScript  
                 │
                 │ HTTP Requests
                 ↓
-┌───────────────────────────────┐
-│          Backend/API          │
-│                               │
-│    Authentication             │
-│    Task Management            │
-│    Leave Management           │
-│    Attendance                 │
-└───────────────┬───────────────┘
+        2. Backend/API                                   
+| Authentication |Task Management | Leave Management  | Attendance          
                 │
                 │ Database Queries
                 ↓
-┌───────────────────────────────┐
-│           Database            │
-│                               │
-│ Users                         │
-│ Tasks                         │
-│ Leave                         │
-│ Attendance                    │
-└───────────────────────────────┘
-
-
+         3. Database                        
+│ Users | Tasks |  Leave | Attendance                       
+                         
+                
 # 12. Functional Requirements
 
 The system is able to do the following:
